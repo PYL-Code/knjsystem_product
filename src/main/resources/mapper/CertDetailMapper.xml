@@ -1,19 +1,26 @@
-<select id="selectCertDetail" resultType="edu.du.knjsystem_product.dto.CertDetailDto">
-  SELECT
-    A003.SEQ_NO_A003         AS seqNoA003,
-    A002.SEQ_NO_A002         AS seqNoA002,
-    A003.STD_CERT_NO         AS certNo,
-    A003.CERT_GB_NM          AS certType,
-    A003.CERT_STRT_DT        AS certStartDate,
-    A003.CERT_END_DT         AS certEndDate,
-    A003.CERT_STATE_NM       AS certState,
-    A001.COMP_NM             AS certOrg,
-    A003.PRDR_GRP_NM         AS groupName,
-    A003.PSN_GROUP_NM        AS groupType,
-    A003.REP_ITEM_NM         AS repItemName,
-    A003.STATUS              AS certRenewalStatus
-  FROM T_SG_A002 A002
-  JOIN T_SG_A001 A001 ON A002.SEQ_NO_A001 = A001.SEQ_NO_A001
-  JOIN T_SG_A003 A003 ON A002.STD_CERT_NO = A003.STD_CERT_NO
-  WHERE A003.SEQ_NO_A003 = #{seqNoA003}
-</select>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.du.knjsystem_product.mapper.CertMapper">
+  <select id="selectCertDetail" resultType="edu.du.knjsystem_product.dto.CertDetailDto">
+    SELECT
+      A003.SEQ_NO_A003         AS seqNoA003,
+      A002.SEQ_NO_A002         AS seqNoA002,
+      A003.STD_CERT_NO         AS certNo,
+      A003.CERT_GB_NM          AS certType,
+      A003.CERT_STRT_DT        AS certStartDate,
+      A003.CERT_END_DT         AS certEndDate,
+      A003.CERT_STATE_NM       AS certState,
+      A001.COMP_NM             AS certOrg,
+      A003.PRDR_GRP_NM         AS groupName,
+      A003.PSN_GROUP_NM        AS groupType,
+      A003.REP_ITEM_NM         AS repItemName,
+      A003.STATUS              AS certRenewalStatus
+    FROM T_SG_A002 A002
+    JOIN T_SG_A001 A001 ON A002.SEQ_NO_A001 = A001.SEQ_NO_A001
+    JOIN T_SG_A003 A003 ON A002.STD_CERT_NO = A003.STD_CERT_NO
+    WHERE A003.SEQ_NO_A003 = #{seqNoA003}
+  </select>
+</mapper>

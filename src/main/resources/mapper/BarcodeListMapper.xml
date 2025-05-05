@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.du.knjsystem_product.mapper.BarcodeMapper">
+
+    <select id="selectBarcodeList" resultType="edu.du.knjsystem_product.dto.BarcodeDto">
+        SELECT * FROM (
+        SELECT
+        F.PRDR_BAR_CD AS barcodeNo,
+        F.PRDR_BAR_NM AS barcodeName,
+        F.REGIST_DATE AS barcodeRegDate,
+        '단일상품' AS productType,
+        A003.STD_CERT_NO AS stdCertNo,
+        A003.REP_ITEM_NM AS repItemName
+        FROM T_SG_F001 F
+        JOIN T_SG_F002 F2 ON F.SEQ_NO_F001 = F2.SEQ_NO_F001
+        JOIN T_SG_A003 A003 ON F2.SEQ_NO_A003 = A003.SEQ_NO_A003
+        WHERE F.DEL_YN = 'N' AND F2.DEL_YN = 'N'
+
+        UNION
+
+        SELECT
+        G.PRDR_BAR_CD AS barcodeNo,
+        G.PRDR_BAR_NM AS barcodeName,
+        G.REGIST_DATE AS barcodeRegDate,
+        '혼합상품' AS productType,
+        A003.STD_CERT_NO AS stdCertNo,
+        A003.REP_ITEM_NM AS repItemName
+        FROM T_SG_G001 G
+        JOIN T_SG_G002 G2 ON G.SEQ_NO_G001 = G2.SEQ_NO_G001
+        JOIN T_SG_G003 G3 ON G2.SEQ_NO_G002 = G3.SEQ_NO_G002
+        JOIN T_SG_A003 A003 ON G3.SEQ_NO_A003 = A003.SEQ_NO_A003
+        WHERE G.DEL_YN = 'N' AND G2.DEL_YN = 'N' AND G3.DEL_YN = 'N'
+        ) AS BarcodeAll
+        <where>
+            <if test="search.barcodeNo != null and search.barcodeNo != ''">
+                AND BarcodeAll.barcodeNo LIKE CONCAT('%', #{search.barcodeNo}, '%')
+            </if>
+            <if test="search.barcodeName != null and search.barcodeName != ''">
+                AND BarcodeAll.barcodeName LIKE CONCAT('%', #{search.barcodeName}, '%')
+            </if>
+            <if test="search.productType == '단일상품'">
+                AND BarcodeAll.productType = '단일상품'
+            </if>
+            <if test="search.productType == '혼합상품'">
+                AND BarcodeAll.productType = '혼합상품'
+            </if>
+            <if test="search.stdCertNo != null and search.stdCertNo != ''">
+                AND BarcodeAll.stdCertNo LIKE CONCAT('%', #{search.stdCertNo}, '%')
+            </if>
+            <if test="search.repItemName != null and search.repItemName != ''">
+                AND BarcodeAll.repItemName LIKE CONCAT('%', #{search.repItemName}, '%')
+            </if>
+        </where>
+        ORDER BY BarcodeAll.barcodeRegDate DESC
+    </select>
+
+</mapper>
