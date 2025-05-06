@@ -1,6 +1,6 @@
 -- 회원보유인증번호 데이터 삽입 (기존 데이터가 있을 경우 오류 발생 가능)
 INSERT INTO T_SG_A002 (SEQ_NO_A001, STD_CERT_NO)
-VALUES (1001, '1963-03-16');
+VALUES (1, '1963-03-16');
 
 
 
@@ -24,11 +24,11 @@ VALUES
 
 -- 상품바코드정보 데이터 삽입
 INSERT INTO T_SG_A004 (SEQ_NO_A003, SEQ_NO_A001, PRDR_BAR_CD, PRDR_BAR_NM, STATUS)
-VALUES (1, 1001, '8800001000011', '단호박', 'I');
+VALUES (1, 1, '8800001000011', '단호박', 'I');
 
 -- 예시로 추가된 데이터 (필요에 따라 다른 데이터 추가 가능)
 INSERT INTO T_SG_A004 (SEQ_NO_A003, SEQ_NO_A001, PRDR_BAR_CD, PRDR_BAR_NM, STATUS)
-VALUES (2, 1001, '8800001000022', '고구마', 'I');
+VALUES (2, 1, '8800001000022', '고구마', 'I');
 
 
 -- 회원업체정보 샘플 데이터 삽입
@@ -38,27 +38,27 @@ INSERT INTO T_SG_A001 (
     ADDR2, REGIST_DATE, APPROVAL_YN, DEL_YN
 ) VALUES
 -- 유기농업자 이영연 (SEQ 1001)
-(1001, '1234567890', '이영연농장', NULL, '1',
+(1, '1234567890', '이영연농장', NULL, '1',
  '이영연', '010-1234-5678', '02-123-4567', '12345', '강원도 평창군 대관령면',
  '고냉지길 12', CURRENT_DATE, 'Y', 'N'),
 
 -- 취급자/유통업체로 김민준 등록 (SEQ 1002)
-(1002, '9876543210', '자연한유통', NULL, '2',
+(2, '9876543210', '자연한유통', NULL, '2',
  '김민준', '010-9876-5432', '02-987-6543', '54321', '경기도 고양시 덕양구',
  '행신동 123', CURRENT_DATE, 'Y', 'N'),
 
 -- 유기농업자 박지현 (SEQ 1003)
-(1003, '5678901234', '청솔농장', NULL, '1',
+(3, '5678901234', '청솔농장', NULL, '1',
  '박지현', '010-5678-9012', '031-234-5678', '67890', '전라남도 곡성군',
  '옥과면 녹색길 88', CURRENT_DATE, 'N', 'N');
 
 
 -- 대표상품정보 : T_SG_F001
 INSERT INTO T_SG_F001 (SEQ_NO_A001, PRDR_BAR_CD, PRDR_BAR_NM, CERT_STATE, REGIST_DATE, DEL_YN)
-VALUES (1001, '8800001000011', '단호박', '정상', CURRENT_DATE, 'N');
+VALUES (1, '8800001000011', '단호박', '정상', CURRENT_DATE, 'N');
 
 INSERT INTO T_SG_F001 (SEQ_NO_A001, PRDR_BAR_CD, PRDR_BAR_NM, CERT_STATE, REGIST_DATE, DEL_YN)
-VALUES (1002, '8800001000033', '고구마즙', '전체취소', CURRENT_DATE, 'N');
+VALUES (1, '8800001000033', '고구마즙', '전체취소', CURRENT_DATE, 'N');
 
 -- 대표상품 생산자정보 : T_SG_F002
 INSERT INTO T_SG_F002 (SEQ_NO_F001, SEQ_NO_A003, REGIST_DATE, DEL_YN)
@@ -69,7 +69,7 @@ VALUES (2, 3, CURRENT_DATE, 'N');
 
 -- 혼합상품정보 : T_SG_G001
 INSERT INTO T_SG_G001 (SEQ_NO_A001, PRDR_BAR_CD, PRDR_BAR_NM, PRDR_COMP_NM, CERT_STATE, REGIST_DATE, DEL_YN)
-VALUES (1002, '8800001000044', '친환경 혼합야채세트', '자연한유통', '정상', CURRENT_DATE, 'N');
+VALUES (1, '8800001000044', '친환경 혼합야채세트', '자연한유통', '정상', CURRENT_DATE, 'N');
 
 -- 구성상품정보 : T_SG_G002
 INSERT INTO T_SG_G002 (SEQ_NO_G001, PRDR_ITEM_NM, REGIST_DATE, DEL_YN)

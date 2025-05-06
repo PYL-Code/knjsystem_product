@@ -24,6 +24,7 @@ class KnjsystemProductApplicationTests {
     @Test
     void testSelect() {
         BarcodeSearchDto search = new BarcodeSearchDto();
+        search.setSeqNoA001(1L);
         search.setBarcodeNo("8800001000011");
         List<BarcodeDto> result = barcodeMapper.selectBarcodeList(search);
         result.forEach(System.out::println);

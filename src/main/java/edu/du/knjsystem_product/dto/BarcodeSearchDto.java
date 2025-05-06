@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BarcodeSearchDto {
+    private Long seqNoA001;
     private String barcodeNo;
     private String barcodeName;
     private String stdCertNo;

@@ -1,17 +1,21 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
   plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
   server: {
     proxy: {
-      // Vue에서 /api로 시작하는 요청을 스프링 부트 서버로 프록시
       '/api/barcode': {
-        target: 'http://localhost:9876', // 백엔드 서버 주소
+        target: 'http://localhost:9876',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api') // prefix 유지 (필요 시 조정)
+        rewrite: (path) => path.replace(/^\/api/, '/api')
       }
     }
   }
 })
-

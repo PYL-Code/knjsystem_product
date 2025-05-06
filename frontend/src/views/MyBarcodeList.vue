@@ -4,11 +4,12 @@
 
     <!-- 🔍 검색 필터 -->
     <form @submit.prevent="fetchBarcodes" class="search-form mb-4">
-      바코드번호<input v-model="search.barcodeNo" placeholder="바코드번호" />
-      상품명<input v-model="search.barcodeName" placeholder="상품명" />
-      인증번호<input v-model="search.stdCertNo" placeholder="인증번호" />
-      대표품목명<input v-model="search.repItemName" placeholder="대표품목명" />
-      상품유형<select v-model="search.productType">
+      바코드번호 <input v-model="search.barcodeNo" placeholder="바코드번호" />
+      상품명 <input v-model="search.barcodeName" placeholder="상품명" />
+      인증번호 <input v-model="search.stdCertNo" placeholder="인증번호" />
+      대표품목명 <input v-model="search.repItemName" placeholder="대표품목명" />
+      상품유형
+      <select v-model="search.productType">
         <option value="">전체</option>
         <option value="단일상품">단일상품</option>
         <option value="혼합상품">혼합상품</option>
@@ -29,15 +30,17 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="barcode in barcodes" :key="barcode.barcodeNo">
-        <td>{{ barcode.barcodeNo }}</td>
-        <td>{{ barcode.barcodeName }}</td>
-        <td>{{ formatDate(barcode.barcodeRegDate) }}</td>
-        <td>{{ barcode.productType }}</td>
-        <td>{{ barcode.stdCertNo }}</td>
-        <td>{{ barcode.repItemName }}</td>
-      </tr>
-      <tr v-if="barcodes.length === 0">
+      <template v-if="barcodes.length > 0">
+        <tr v-for="barcode in barcodes" :key="barcode.barcodeNo">
+          <td>{{ barcode.barcodeNo }}</td>
+          <td>{{ barcode.barcodeName }}</td>
+          <td>{{ formatDate(barcode.barcodeRegDate) }}</td>
+          <td>{{ barcode.productType }}</td>
+          <td>{{ barcode.stdCertNo }}</td>
+          <td>{{ barcode.repItemName }}</td>
+        </tr>
+      </template>
+      <tr v-else>
         <td colspan="6" class="text-center">조회된 데이터가 없습니다.</td>
       </tr>
       </tbody>
@@ -45,44 +48,57 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
 
-export default {
-  name: 'BarcodeList',
-  data() {
-    return {
-      search: {
-        barcodeNo: '',
-        barcodeName: '',
-        stdCertNo: '',
-        repItemName: '',
-        productType: '',
-      },
-      barcodes: [],
-    };
-  },
-  methods: {
-    async fetchBarcodes() {
-      try {
-        const { data } = await axios.get('/api/barcode/getlist', {params: this.search});
-        this.barcodes = data;
-        // console.log('barcode: ', data)
-      } catch (error) {
-        console.error('바코드 조회 오류:', error);
-        this.barcodes = [];
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+
+const barcodes = ref([]);
+const search = reactive({
+  barcodeNo: '',
+  barcodeName: '',
+  stdCertNo: '',
+  repItemName: '',
+  productType: ''
+});
+
+const fetchBarcodes = async () => {
+  try {
+    if (!user.value?.seqNoA001) {
+      console.warn('로그인 사용자의 식별자 값이 없습니다.');
+      barcodes.value = [];
+      return;
+    }
+
+    const { data } = await axios.get('/api/barcode/getlist', {
+      params: {
+        ...search,
+        // seqNoA001: user.value.seqNoA001
+        seqNoA001: 1
       }
-    },
-    formatDate(dateStr) {
-      if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString();
-    },
-  },
-  mounted() {
-    this.fetchBarcodes(); // 초기 자동 조회
-  },
+    });
+
+
+
+    barcodes.value = data;
+  } catch (error) {
+    console.error('바코드 조회 실패:', error);
+    barcodes.value = [];
+  }
 };
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-';
+  return new Date(dateStr).toLocaleDateString();
+};
+
+onMounted(() => {
+  fetchBarcodes();
+});
 </script>
 
 <style scoped>
