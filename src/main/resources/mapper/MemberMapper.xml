@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.du.knjsystem_product.mapper.MemberMapper">
+
+    <select id="selectMemberByNo" parameterType="long" resultType="edu.du.knjsystem_product.dto.MemberDto">
+        SELECT
+            SEQ_NO_A001 AS no,
+            BNS_NO AS bnsNo,
+            COMP_NM AS companyName,
+            COMP880_CD AS company880Code
+        FROM T_SG_A001
+        WHERE SEQ_NO_A001 = #{no}
+    </select>
+
+</mapper>

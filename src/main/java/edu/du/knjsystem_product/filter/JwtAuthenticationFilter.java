@@ -31,14 +31,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && jwtTokenProvider.validateToken(token)) {
             CustomUserDetails userDetails = jwtTokenProvider.getUserFromToken(token);
 
-            System.out.println("✅ 유효한 토큰 - 사용자 ID: " + userDetails.getUsername());
+//            System.out.println("✅ 유효한 토큰 - 사용자 ID: " + userDetails.getUsername());
 
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         } else {
-            System.out.println("❌ 토큰 유효성 실패 또는 없음");
+//            System.out.println("❌ 토큰 유효성 실패 또는 없음");
         }
 
         filterChain.doFilter(request, response);

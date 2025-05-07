@@ -2,6 +2,7 @@ package edu.du.knjsystem_product.controller;
 
 import edu.du.knjsystem_product.dto.BarcodeDto;
 import edu.du.knjsystem_product.dto.BarcodeSearchDto;
+import edu.du.knjsystem_product.dto.MemberDto;
 import edu.du.knjsystem_product.security.CustomUserDetails;
 import edu.du.knjsystem_product.service.BarcodeService;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class BarcodeRestController {
         this.barcodeService = barcodeService;
     }
 
-    @GetMapping("/getlist")
+    @GetMapping("/select")
     public ResponseEntity<List<BarcodeDto>> getBarcodeList(@ModelAttribute BarcodeSearchDto search) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();

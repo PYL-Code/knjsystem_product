@@ -22,13 +22,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions().sameOrigin())  // ✅ 이 줄 추가!
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/barcode/**").authenticated()  // ✅ 새 방식
+                        .requestMatchers("/api/barcode/**").authenticated()
+                        .requestMatchers("/h2-console/**").permitAll()   // ✅ h2-console 허용
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
 }
 

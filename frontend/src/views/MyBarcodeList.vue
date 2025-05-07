@@ -1,25 +1,61 @@
 <template>
   <div class="container">
-    <h2 class="my-4">📦 바코드 조회</h2>
+    <h2 class="my-4 text-center">바코드 조회</h2>
+
+    <!-- 👤 사용자 정보 (한 줄 박스 정렬) -->
+    <div class="row mb-4" v-if="userInfo">
+      <div class="col-md-4">
+        <div class="card p-2 text-center">
+          <strong>업체명/생산자명</strong><br />{{ userInfo.companyName }}
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-2 text-center">
+          <strong>사업자등록번호</strong><br />{{ userInfo.bnsNo }}
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-2 text-center">
+          <strong>GLN(업체코드)</strong><br />{{ userInfo.company880Code || '-' }}
+        </div>
+      </div>
+    </div>
 
     <!-- 🔍 검색 필터 -->
-    <form @submit.prevent="fetchBarcodes" class="search-form mb-4">
-      바코드번호 <input v-model="search.barcodeNo" placeholder="바코드번호" />
-      상품명 <input v-model="search.barcodeName" placeholder="상품명" />
-      인증번호 <input v-model="search.stdCertNo" placeholder="인증번호" />
-      대표품목명 <input v-model="search.repItemName" placeholder="대표품목명" />
-      상품유형
-      <select v-model="search.productType">
-        <option value="">전체</option>
-        <option value="단일상품">단일상품</option>
-        <option value="혼합상품">혼합상품</option>
-      </select>
-      <button type="submit">조회</button>
+    <form @submit.prevent="fetchBarcodes" class="row g-2 align-items-center mb-4">
+      <div class="col-md-2">
+        <select v-model="searchField" class="form-select">
+          <option value="">전체</option>
+          <option value="barcodeNo">바코드번호</option>
+          <option value="barcodeName">상품명</option>
+          <option value="stdCertNo">인증번호</option>
+          <option value="repItemName">대표품목명</option>
+        </select>
+      </div>
+
+      <div class="col-md-5">
+        <input v-model="searchText" class="form-control" placeholder="검색어 입력" />
+      </div>
+
+      <div class="col-md-1"></div>
+
+      <div class="col-md-1">상품유형</div>
+      <div class="col-md-2">
+        <select v-model="search.productType" class="form-select">
+          <option value="">전체</option>
+          <option value="단일상품">단일상품</option>
+          <option value="혼합상품">혼합상품</option>
+        </select>
+      </div>
+
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-primary w-100">조회</button>
+      </div>
     </form>
 
     <!-- 📄 바코드 목록 -->
-    <table class="barcode-table">
-      <thead>
+    <table class="table table-bordered table-hover">
+      <thead class="table-light text-center">
       <tr>
         <th>바코드번호</th>
         <th>상품명</th>
@@ -41,7 +77,7 @@
         </tr>
       </template>
       <tr v-else>
-        <td colspan="6" class="text-center">조회된 데이터가 없습니다.</td>
+        <td colspan="6" class="text-center text-muted">조회된 데이터가 없습니다.</td>
       </tr>
       </tbody>
     </table>
@@ -49,35 +85,47 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { getToken } from '@/utils/auth'; // 🔑 토큰 불러오기
+import { getToken } from '@/utils/auth';
 
 const barcodes = ref([]);
-const search = reactive({
-  barcodeNo: '',
-  barcodeName: '',
-  stdCertNo: '',
-  repItemName: '',
+const userInfo = ref(null);
+const search = ref({
   productType: ''
 });
+const searchField = ref('');
+const searchText = ref('');
+
+const fetchUserInfo = async () => {
+  const token = getToken();
+  try {
+    const { data } = await axios.get('/api/list/member', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    userInfo.value = data;
+  } catch (error) {
+    console.error('사용자 정보 조회 실패:', error);
+  }
+};
 
 const fetchBarcodes = async () => {
   const token = getToken();
-  if (!token) {
-    console.warn('로그인 후 이용해주세요.');
-    barcodes.value = [];
-    return;
+  if (!token) return;
+
+  const params = {};
+  if (searchField.value && searchText.value) {
+    params[searchField.value] = searchText.value;
+  }
+  if (search.value.productType) {
+    params.productType = search.value.productType;
   }
 
   try {
-    const { data } = await axios.get('/api/barcode/getlist', {
-      params: search,
-      headers: {
-        Authorization: `Bearer ${token}` // 👉 JWT 포함
-      }
+    const { data } = await axios.get('/api/barcode/select', {
+      params,
+      headers: { Authorization: `Bearer ${token}` }
     });
-
     barcodes.value = data;
   } catch (error) {
     console.error('바코드 조회 실패:', error);
@@ -91,34 +139,23 @@ const formatDate = (dateStr) => {
 };
 
 onMounted(() => {
+  fetchUserInfo();
   fetchBarcodes();
 });
 </script>
 
-
 <style scoped>
 .container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: auto;
 }
-.search-form input,
-.search-form select {
-  margin-right: 8px;
-  padding: 5px;
+.card {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
-.barcode-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.barcode-table th,
-.barcode-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-}
-.barcode-table th {
-  background-color: #f0f0f0;
-}
-.text-center {
-  text-align: center;
+.table th,
+.table td {
+  vertical-align: middle;
 }
 </style>
