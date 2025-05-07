@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.du.knjsystem_product.mapper.CertMapper">
+
+    <select id="selectProductCertInfo" resultType="edu.du.knjsystem_product.dto.BarcodeDetailCertInfoDto">
+        SELECT
+            A003.SEQ_NO_A003   AS certId,
+            A003.STD_CERT_NO   AS stdCertNo,
+            A003.CERT_GB_NM    AS certGbNm,
+            A003.CERT_STRT_DT  AS certStartDate,
+            A003.CERT_END_DT   AS certEndDate,
+            A003.CERT_STATE_NM AS certStateNm,
+            A003.PRDR_GRP_NM   AS prdrGrpNm,
+            A003.PSN_GROUP_NM  AS psnGroupNm,
+            A003.REP_ITEM_NM   AS repItemNm,
+            A003.ITEM_NM       AS itemNm,
+            A003.FRMR_NM       AS frmrNm
+        FROM
+            T_SG_A003 A003
+        JOIN
+            T_SG_A004 A004 ON A003.SEQ_NO_A003 = A004.SEQ_NO_A003
+        WHERE
+            A004.SEQ_NO_A004 = #{barcodeId}
+    </select>
+
+
+</mapper>

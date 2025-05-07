@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BarcodeDto {
+public class BarcodeListDto {
     private String barcodeNo;        // 바코드번호
     private String barcodeName;      // 상품바코드명
     private LocalDateTime barcodeRegDate;// 바코드 등록일

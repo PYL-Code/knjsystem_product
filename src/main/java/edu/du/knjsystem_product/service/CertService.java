@@ -1,8 +1,6 @@
 package edu.du.knjsystem_product.service;
 
-import edu.du.knjsystem_product.dto.CertDetailDto;
-import edu.du.knjsystem_product.dto.CertListDto;
-import edu.du.knjsystem_product.dto.CertSearchDto;
+import edu.du.knjsystem_product.dto.*;
 import edu.du.knjsystem_product.mapper.CertMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
@@ -24,5 +22,9 @@ public class CertService {
 
     public CertDetailDto selectCertDetail(@Param("certNo") String certNo) {
         return certMapper.selectCertDetail(certNo);
+    }
+
+    public BarcodeDetailCertInfoDto selectProductCertInfo(@Param("barcodeId") Long barcodeId) {
+        return certMapper.selectProductCertInfo(barcodeId);
     }
 }

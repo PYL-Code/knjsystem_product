@@ -1,5 +1,6 @@
 package edu.du.knjsystem_product.mapper;
 
+import edu.du.knjsystem_product.dto.BarcodeDetailCertInfoDto;
 import edu.du.knjsystem_product.dto.CertDetailDto;
 import edu.du.knjsystem_product.dto.CertListDto;
 import edu.du.knjsystem_product.dto.CertSearchDto;
@@ -16,4 +17,7 @@ public interface CertMapper {
 
     // 인증번호 상세 조회
     CertDetailDto selectCertDetail(@Param("seqNoA003") String seqNoA003);
+
+    //바코드 상세조회 페이지에서 인증번호 조회
+    BarcodeDetailCertInfoDto selectProductCertInfo(@Param("barcodeId") Long barcodeId);
 }

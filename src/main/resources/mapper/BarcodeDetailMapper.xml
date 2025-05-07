@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.du.knjsystem_product.mapper.BarcodeMapper">
+
+    <select id="selectBarcodeDetail" resultType="edu.du.knjsystem_product.dto.BarcodeDetailCertInfoDto">
+        SELECT
+            A004.SEQ_NO_A004 AS barcodeId,
+            A004.PRDR_BAR_CD AS barcode,
+            A004.PRDR_BAR_NM AS barcodeName,
+            '상품바코드' AS productType
+        FROM
+            T_SG_A004 A004
+        WHERE
+            A004.SEQ_NO_A004 = #{barcodeId}
+    </select>
+
+</mapper>

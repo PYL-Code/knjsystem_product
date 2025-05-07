@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="edu.du.knjsystem_product.mapper.BarcodeMapper">
 
-    <select id="selectBarcodeList" resultType="edu.du.knjsystem_product.dto.BarcodeDto">
+    <select id="selectBarcodeList" resultType="edu.du.knjsystem_product.dto.BarcodeListDto">
         SELECT * FROM (
         -- 단일상품
         SELECT

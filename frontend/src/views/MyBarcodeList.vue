@@ -122,7 +122,7 @@ const fetchBarcodes = async () => {
   }
 
   try {
-    const { data } = await axios.get('/api/barcode/select', {
+    const { data } = await axios.get('/api/barcode/list', {
       params,
       headers: { Authorization: `Bearer ${token}` }
     });

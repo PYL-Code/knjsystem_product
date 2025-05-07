@@ -1,10 +1,11 @@
 package edu.du.knjsystem_product.controller;
 
-import edu.du.knjsystem_product.dto.BarcodeDto;
+import edu.du.knjsystem_product.dto.BarcodeDetailDto;
+import edu.du.knjsystem_product.dto.BarcodeListDto;
 import edu.du.knjsystem_product.dto.BarcodeSearchDto;
-import edu.du.knjsystem_product.dto.MemberDto;
 import edu.du.knjsystem_product.security.CustomUserDetails;
 import edu.du.knjsystem_product.service.BarcodeService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,13 +26,19 @@ public class BarcodeRestController {
         this.barcodeService = barcodeService;
     }
 
-    @GetMapping("/select")
-    public ResponseEntity<List<BarcodeDto>> getBarcodeList(@ModelAttribute BarcodeSearchDto search) {
+    @GetMapping("/list")
+    public ResponseEntity<List<BarcodeListDto>> getBarcodeList(@ModelAttribute BarcodeSearchDto search) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
         search.setSeqNoA001(user.getSeqNoA001());
 
-        List<BarcodeDto> list = barcodeService.getBarcodes(search);
+        List<BarcodeListDto> list = barcodeService.getBarcodesList(search);
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<BarcodeDetailDto> getBarcodeDetail(@Param("seqNoA004") Long seqNoA004) {
+        BarcodeDetailDto barcode = barcodeService.getBarcode(seqNoA004);
+        return ResponseEntity.ok(barcode);
     }
 }

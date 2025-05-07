@@ -1,6 +1,7 @@
 package edu.du.knjsystem_product.service;
 
-import edu.du.knjsystem_product.dto.BarcodeDto;
+import edu.du.knjsystem_product.dto.BarcodeDetailDto;
+import edu.du.knjsystem_product.dto.BarcodeListDto;
 import edu.du.knjsystem_product.dto.BarcodeSearchDto;
 import edu.du.knjsystem_product.mapper.BarcodeMapper;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,11 @@ public class BarcodeService {
         this.barcodeMapper = barcodeMapper;
     }
 
-    public List<BarcodeDto> getBarcodes(BarcodeSearchDto search) {
+    public List<BarcodeListDto> getBarcodesList(BarcodeSearchDto search) {
         return barcodeMapper.selectBarcodeList(search);
+    }
+
+    public BarcodeDetailDto getBarcode(Long barcodeId) {
+        return barcodeMapper.selectBarcodeDetail(barcodeId);
     }
 }

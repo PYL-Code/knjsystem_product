@@ -1,6 +1,6 @@
 package edu.du.knjsystem_product;
 
-import edu.du.knjsystem_product.dto.BarcodeDto;
+import edu.du.knjsystem_product.dto.BarcodeListDto;
 import edu.du.knjsystem_product.dto.BarcodeSearchDto;
 import edu.du.knjsystem_product.mapper.BarcodeMapper;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class KnjsystemProductApplicationTests {
         BarcodeSearchDto search = new BarcodeSearchDto();
         search.setSeqNoA001(1L);
         search.setBarcodeNo("8800001000011");
-        List<BarcodeDto> result = barcodeMapper.selectBarcodeList(search);
+        List<BarcodeListDto> result = barcodeMapper.selectBarcodeList(search);
         result.forEach(System.out::println);
     }
 
