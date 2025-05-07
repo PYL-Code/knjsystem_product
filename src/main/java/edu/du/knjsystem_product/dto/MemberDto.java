@@ -16,13 +16,4 @@ public class MemberDto {
     private String bnsNo; //사업자등록번호
     private String companyName; //업체명
     private String company880Code; //880업체코드
-    private String companyType; //업체구분
-    private String repName; //대표이름
-    private String repPhone; //대표전화
-    private String repFax; //대표팩스
-    private String address; //주소
-    private String detailAddress; //상세주소
-    private LocalDateTime regDate; //등록일
-    private String ApprovalStatus; //승인구분
-    private String deleteStatus; //삭제구분
 }

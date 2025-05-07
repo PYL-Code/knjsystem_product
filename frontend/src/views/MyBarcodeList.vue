@@ -51,11 +51,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
-import { useUserStore } from '@/stores/user';
-import { storeToRefs } from 'pinia';
-
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
+import { getToken } from '@/utils/auth'; // 🔑 토큰 불러오기
 
 const barcodes = ref([]);
 const search = reactive({
@@ -67,22 +63,20 @@ const search = reactive({
 });
 
 const fetchBarcodes = async () => {
-  try {
-    if (!user.value?.seqNoA001) {
-      console.warn('로그인 사용자의 식별자 값이 없습니다.');
-      barcodes.value = [];
-      return;
-    }
+  const token = getToken();
+  if (!token) {
+    console.warn('로그인 후 이용해주세요.');
+    barcodes.value = [];
+    return;
+  }
 
+  try {
     const { data } = await axios.get('/api/barcode/getlist', {
-      params: {
-        ...search,
-        // seqNoA001: user.value.seqNoA001
-        seqNoA001: 1
+      params: search,
+      headers: {
+        Authorization: `Bearer ${token}` // 👉 JWT 포함
       }
     });
-
-
 
     barcodes.value = data;
   } catch (error) {
@@ -100,6 +94,7 @@ onMounted(() => {
   fetchBarcodes();
 });
 </script>
+
 
 <style scoped>
 .container {
