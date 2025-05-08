@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BarcodeListDto {
+    private Long barcodeId;         // SeqNoA004
     private String barcodeNo;        // 바코드번호
     private String barcodeName;      // 상품바코드명
     private LocalDateTime barcodeRegDate;// 바코드 등록일

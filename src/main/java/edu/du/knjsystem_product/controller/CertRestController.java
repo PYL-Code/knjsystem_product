@@ -19,8 +19,8 @@ public class CertRestController {
     }
 
     @GetMapping("barcode/detail")
-    public ResponseEntity<BarcodeDetailCertInfoDto> getBarcodeDetail(@Param("seqNoA003") Long seqNoA003) {
-        BarcodeDetailCertInfoDto certInfo = certService.selectProductCertInfo(seqNoA003);
+    public ResponseEntity<BarcodeDetailCertInfoDto> getBarcodeDetail(@Param("seqNoA004") Long seqNoA004) {
+        BarcodeDetailCertInfoDto certInfo = certService.selectProductCertInfo(seqNoA004);
         return ResponseEntity.ok(certInfo);
     }
 }

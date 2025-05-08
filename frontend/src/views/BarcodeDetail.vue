@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-5">
-    <h2>📄 바코드 상세 조회</h2>
+    <h2 class="mb-4 text-center">바코드 상세 조회</h2>
 
     <!-- 사용자 정보 -->
     <div class="row mb-4" v-if="userInfo">
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <!-- 상품 바코드 정보 -->
+    <!-- 바코드 정보 -->
     <div class="card mb-3 p-3" v-if="barcode">
       <h5>상품 바코드 정보</h5>
       <p><strong>바코드번호:</strong> {{ barcode.barcode }}</p>
@@ -42,6 +42,12 @@
       <p><strong>품목명:</strong> {{ cert.itemNm }}</p>
       <p><strong>소속농가명:</strong> {{ cert.frmrNm }}</p>
     </div>
+    <div v-else class="alert alert-warning text-center">
+      인증정보를 추가해 주세요.
+    </div>
+
+    <a href="/barcode/list" class="mt-2 btn btn-primary">바코드 목록</a>
+
   </div>
 </template>
 
@@ -58,27 +64,26 @@ const userInfo = ref(null);
 
 onMounted(async () => {
   const token = getToken();
-  const seqNoA004 = route.query.seqNoA004;
+  const barcodeId = route.query.barcodeId;
+  // console.log("➡️ 넘어온 barcodeId:", barcodeId);
 
   const config = {
     headers: { Authorization: `Bearer ${token}` }
   };
 
   try {
-    // 사용자 정보
     const userRes = await axios.get('/api/list/member', config);
     userInfo.value = userRes.data;
 
-    // 바코드 정보
     const { data: barcodeData } = await axios.get('/api/barcode/detail', {
-      params: { seqNoA004 },
+      params: { barcodeId },
       ...config
     });
+    // console.log('✅ 받은 barcode 데이터:', barcodeData);
     barcode.value = barcodeData;
 
-    // 인증 정보 (PK는 barcode에서 가져온 seqNoA003 사용)
     const { data: certData } = await axios.get('/api/cert/barcode/detail', {
-      params: { seqNoA003: barcodeData.barcodeId }, // ❗ 실제 필드는 DTO 구조에 따라 조정
+      params: { seqNoA004: barcodeId }, // 여기에서 seqNoA004를 그대로 쓰는 게 맞는지 확인 필요
       ...config
     });
     cert.value = certData;

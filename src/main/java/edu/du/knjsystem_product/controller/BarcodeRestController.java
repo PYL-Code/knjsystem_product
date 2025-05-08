@@ -37,8 +37,10 @@ public class BarcodeRestController {
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<BarcodeDetailDto> getBarcodeDetail(@Param("seqNoA004") Long seqNoA004) {
-        BarcodeDetailDto barcode = barcodeService.getBarcode(seqNoA004);
+    public ResponseEntity<BarcodeDetailDto> getBarcodeDetail(@Param("barcodeId") Long barcodeId) {
+//        System.out.println("✅ 조회 요청 받은 barcodeId: " + barcodeId);
+
+        BarcodeDetailDto barcode = barcodeService.getBarcode(barcodeId);
         return ResponseEntity.ok(barcode);
     }
 }

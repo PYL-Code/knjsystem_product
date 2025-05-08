@@ -1,8 +1,9 @@
+<!-- BarcodeList.vue -->
 <template>
   <div class="container">
     <h2 class="my-4 text-center">바코드 조회</h2>
 
-    <!-- 👤 사용자 정보 (한 줄 박스 정렬) -->
+    <!-- 👤 사용자 정보 -->
     <div class="row mb-4" v-if="userInfo">
       <div class="col-md-4">
         <div class="card p-2 text-center">
@@ -67,7 +68,12 @@
       </thead>
       <tbody>
       <template v-if="barcodes.length > 0">
-        <tr v-for="barcode in barcodes" :key="barcode.barcodeNo">
+        <tr
+            v-for="barcode in barcodes"
+            :key="barcode.barcodeNo"
+            @click="goToDetail(barcode.barcodeId)"
+            style="cursor: pointer"
+        >
           <td>{{ barcode.barcodeNo }}</td>
           <td>{{ barcode.barcodeName }}</td>
           <td>{{ formatDate(barcode.barcodeRegDate) }}</td>
@@ -87,13 +93,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 import { getToken } from '@/utils/auth';
 
+const router = useRouter();
 const barcodes = ref([]);
 const userInfo = ref(null);
-const search = ref({
-  productType: ''
-});
+const search = ref({ productType: '' });
 const searchField = ref('');
 const searchText = ref('');
 
@@ -133,6 +139,11 @@ const fetchBarcodes = async () => {
   }
 };
 
+const goToDetail = (barcodeId) => {
+  router.push({ path: '/barcode/detail', query: { barcodeId } });
+  // console.log(barcodes);
+};
+
 const formatDate = (dateStr) => {
   if (!dateStr) return '-';
   return new Date(dateStr).toLocaleDateString();
@@ -143,19 +154,3 @@ onMounted(() => {
   fetchBarcodes();
 });
 </script>
-
-<style scoped>
-.container {
-  max-width: 1000px;
-  margin: auto;
-}
-.card {
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-.table th,
-.table td {
-  vertical-align: middle;
-}
-</style>

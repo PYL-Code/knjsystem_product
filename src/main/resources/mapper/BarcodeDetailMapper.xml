@@ -4,16 +4,26 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="edu.du.knjsystem_product.mapper.BarcodeMapper">
 
-    <select id="selectBarcodeDetail" resultType="edu.du.knjsystem_product.dto.BarcodeDetailCertInfoDto">
+    <select id="selectBarcodeDetail" resultType="edu.du.knjsystem_product.dto.BarcodeDetailDto">
         SELECT
             A004.SEQ_NO_A004 AS barcodeId,
             A004.PRDR_BAR_CD AS barcode,
             A004.PRDR_BAR_NM AS barcodeName,
-            '상품바코드' AS productType
+            CASE
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM T_SG_F001 F
+                    WHERE F.PRDR_BAR_CD = A004.PRDR_BAR_CD
+                      AND F.SEQ_NO_A001 = A004.SEQ_NO_A001
+                ) THEN '단일상품'
+                ELSE '혼합상품'
+                END AS productType
         FROM
             T_SG_A004 A004
         WHERE
             A004.SEQ_NO_A004 = #{barcodeId}
     </select>
+
+
 
 </mapper>
