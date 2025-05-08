@@ -24,6 +24,7 @@
     <table class="table table-bordered table-hover">
       <thead class="table-light text-center">
       <tr>
+        <th>선택</th>
         <th>인증번호</th>
         <th>농가/단체명</th>
         <th>소속농가</th>
@@ -34,6 +35,14 @@
       <tbody>
       <template v-if="certs.length > 0">
         <tr v-for="cert in certs" :key="cert.certId">
+          <td class="text-center">
+            <input
+                type="radio"
+                name="selectedCert"
+                :value="cert.certId"
+                v-model="selectedCertId"
+            />
+          </td>
           <td>{{ cert.stdCertNo }}</td>
           <td>{{ cert.prdrGrpNm }}</td>
           <td>{{ cert.frmrNm }}</td>
@@ -42,10 +51,17 @@
         </tr>
       </template>
       <tr v-else>
-        <td colspan="5" class="text-center text-muted">조회된 인증정보가 없습니다.</td>
+        <td colspan="6" class="text-center text-muted">조회된 인증정보가 없습니다.</td>
       </tr>
       </tbody>
     </table>
+
+    <!-- 등록 버튼 -->
+    <div class="text-end">
+      <button class="btn btn-success" @click="submitSelectedCert" :disabled="!selectedCertId">
+        등록
+      </button>
+    </div>
   </div>
 </template>
 
@@ -53,11 +69,16 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { getToken } from '@/utils/auth';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
 
 const certs = ref([]);
-const userInfo = ref(null);
+const selectedCertId = ref(null);
 const searchField = ref('');
 const searchText = ref('');
+const userInfo = ref(null);
 
 const fetchUserInfo = async () => {
   const token = getToken();
@@ -83,7 +104,7 @@ const fetchCerts = async () => {
   params.userNo = userInfo.value.no;
 
   if (searchField.value === '') {
-    params.all = searchText.value; // 전체 검색
+    params.all = searchText.value;
   } else if (searchText.value) {
     params[searchField.value] = searchText.value;
   }
@@ -97,6 +118,34 @@ const fetchCerts = async () => {
   } catch (err) {
     console.error('인증정보 조회 실패:', err);
     certs.value = [];
+  }
+};
+
+const submitSelectedCert = async () => {
+  const token = getToken();
+  const barcodeId = route.query.barcodeId;
+  const certId = selectedCertId.value;
+  const userNo = userInfo.value?.no;
+
+  if (!certId || !barcodeId || !userNo) {
+    alert('모든 값이 유효한지 확인해 주세요.');
+    return;
+  }
+
+  try {
+    await axios.post(
+        '/api/barcode/update/cert/into/barcode',
+        null,
+        {
+          params: { certId, barcodeId, userNo },
+          headers: { Authorization: `Bearer ${token}` }
+        }
+    );
+    alert('✅ 인증정보가 바코드에 등록되었습니다!');
+    router.push('/barcode/list');
+  } catch (error) {
+    console.error('인증정보 등록 실패:', error);
+    alert('❌ 인증정보 등록에 실패했습니다.');
   }
 };
 

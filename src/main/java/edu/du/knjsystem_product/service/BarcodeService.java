@@ -24,4 +24,8 @@ public class BarcodeService {
     public BarcodeDetailDto getBarcode(Long barcodeId) {
         return barcodeMapper.selectBarcodeDetail(barcodeId);
     }
+
+    public void updateBarcodeCert(Long certId, String barcodeId,  Long userNo) {
+        barcodeMapper.updateCertForBarcode(certId, barcodeId, userNo);
+    }
 }

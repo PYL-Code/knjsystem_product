@@ -17,7 +17,14 @@ public interface BarcodeMapper {
     BarcodeDetailDto selectBarcodeDetail(@Param("barcodeId") Long barcodeId);
 
     //바코드에 인증정보 추가
-    @Update("UPDATE T_SG_A004 SET SEQ_NO_A003 = #{certId} WHERE SEQ_NO_A004 = #{barcodeId}")
-    void updateCertInfoForBarcode(@Param("barcodeId") Long barcodeId,
-                                  @Param("certId") Long certId);
+    @Update("""
+    UPDATE T_SG_A004
+    SET SEQ_NO_A003 = #{certId}
+    WHERE PRDR_BAR_CD = #{barcodeNo}
+      AND SEQ_NO_A001 = #{userNo}
+""")
+    int updateCertForBarcode(@Param("certId") Long certId,
+                             @Param("barcodeNo") String barcodeNo,
+                             @Param("userNo") Long userNo);
+
 }

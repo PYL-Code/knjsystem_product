@@ -9,10 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,5 +39,13 @@ public class BarcodeRestController {
 
         BarcodeDetailDto barcode = barcodeService.getBarcode(barcodeId);
         return ResponseEntity.ok(barcode);
+    }
+
+    @PostMapping("/update/cert/into/barcode")
+    public ResponseEntity<String> updateCertInfo(@Param("certId") Long certId,
+                                                 @Param("barcodeId") String barcodeId,
+                                                 @Param("userNo") Long userNo) {
+        barcodeService.updateBarcodeCert(certId, barcodeId, userNo);
+        return ResponseEntity.ok("인증정보 등록 완료되었습니다.");
     }
 }
