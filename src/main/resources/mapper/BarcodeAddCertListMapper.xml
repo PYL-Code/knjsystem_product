@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.du.knjsystem_product.mapper.CertMapper">
+
+    <select id="selectBarcodeAddCertList" resultType="edu.du.knjsystem_product.dto.BarcodeAddCertListDto">
+        SELECT
+        A003.SEQ_NO_A003   AS certId,
+        A002.SEQ_NO_A002   AS memberCertId,
+        A003.STD_CERT_NO   AS stdCertNo,
+        A003.PRDR_GRP_NM   AS prdrGrpNm,
+        A003.FRMR_NM       AS frmrNm,
+        A003.REP_ITEM_NM   AS repItemName,
+        A003.ITEM_NM       AS itemName
+        FROM T_SG_A002 A002
+        JOIN T_SG_A003 A003 ON A002.STD_CERT_NO = A003.STD_CERT_NO
+        WHERE A002.SEQ_NO_A001 = #{search.userNo}
+        <if test="search.stdCertNo != null and search.stdCertNo != ''">
+            AND A003.STD_CERT_NO LIKE CONCAT('%', #{search.stdCertNo}, '%')
+        </if>
+        <if test="search.repItemName != null and search.repItemName != ''">
+            AND A003.REP_ITEM_NM LIKE CONCAT('%', #{search.repItemName}, '%')
+        </if>
+        <if test="search.itemName != null and search.itemName != ''">
+            AND A003.ITEM_NM LIKE CONCAT('%', #{search.itemName}, '%')
+        </if>
+        <if test="search.all != null and search.all != ''">
+            AND (
+            A003.STD_CERT_NO LIKE CONCAT('%', #{search.all}, '%')
+            OR A003.PRDR_GRP_NM LIKE CONCAT('%', #{search.all}, '%')
+            OR A003.FRMR_NM LIKE CONCAT('%', #{search.all}, '%')
+            OR A003.REP_ITEM_NM LIKE CONCAT('%', #{search.all}, '%')
+            OR A003.ITEM_NM LIKE CONCAT('%', #{search.all}, '%')
+            )
+        </if>
+        ORDER BY A003.REGIST_DATE DESC
+    </select>
+
+</mapper>

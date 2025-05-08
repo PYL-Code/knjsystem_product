@@ -21,6 +21,8 @@
       </div>
     </div>
 
+    <a href="/barcode/cert/update" class="mb-2 btn btn-primary">인증정보 추가</a>
+
     <!-- 바코드 정보 -->
     <div class="card mb-3 p-3" v-if="barcode">
       <h5>상품 바코드 정보</h5>

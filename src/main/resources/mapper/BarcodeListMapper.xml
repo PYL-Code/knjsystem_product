@@ -61,6 +61,14 @@
             <if test="search.repItemName != null and search.repItemName != ''">
                 AND BarcodeAll.repItemName LIKE CONCAT('%', #{search.repItemName}, '%')
             </if>
+            <if test="search.all != null and search.all != ''">
+                AND (
+                BarcodeAll.barcodeNo LIKE CONCAT('%', #{search.all}, '%')
+                OR BarcodeAll.barcodeName LIKE CONCAT('%', #{search.all}, '%')
+                OR BarcodeAll.stdCertNo LIKE CONCAT('%', #{search.all}, '%')
+                OR BarcodeAll.repItemName LIKE CONCAT('%', #{search.all}, '%')
+                )
+            </if>
         </where>
         ORDER BY BarcodeAll.barcodeRegDate DESC
     </select>

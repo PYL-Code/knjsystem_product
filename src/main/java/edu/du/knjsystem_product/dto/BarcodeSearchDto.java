@@ -15,4 +15,5 @@ public class BarcodeSearchDto {
     private String stdCertNo;
     private String repItemName;
     private String productType;
+    private String all;
 }

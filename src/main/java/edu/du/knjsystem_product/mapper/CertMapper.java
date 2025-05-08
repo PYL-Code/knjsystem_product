@@ -1,11 +1,9 @@
 package edu.du.knjsystem_product.mapper;
 
-import edu.du.knjsystem_product.dto.BarcodeDetailCertInfoDto;
-import edu.du.knjsystem_product.dto.CertDetailDto;
-import edu.du.knjsystem_product.dto.CertListDto;
-import edu.du.knjsystem_product.dto.CertSearchDto;
+import edu.du.knjsystem_product.dto.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
 
@@ -20,4 +18,8 @@ public interface CertMapper {
 
     //바코드 상세조회 페이지에서 인증번호 조회
     BarcodeDetailCertInfoDto selectProductCertInfo(@Param("barcodeId") Long barcodeId);
+
+    //바코드에 인증번호 추가 페이지에서 인증번호 리스트
+    List<BarcodeAddCertListDto> selectBarcodeAddCertList(@Param("search") BarcodeAddCertSearchDto search);
+
 }

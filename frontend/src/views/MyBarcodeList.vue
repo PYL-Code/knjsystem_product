@@ -120,7 +120,9 @@ const fetchBarcodes = async () => {
   if (!token) return;
 
   const params = {};
-  if (searchField.value && searchText.value) {
+  if (searchField.value === '') {
+    params.all = searchText.value; // ✅ 전체 검색일 경우 all 파라미터로
+  } else if (searchText.value) {
     params[searchField.value] = searchText.value;
   }
   if (search.value.productType) {

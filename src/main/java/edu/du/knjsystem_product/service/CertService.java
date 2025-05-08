@@ -27,4 +27,8 @@ public class CertService {
     public BarcodeDetailCertInfoDto selectProductCertInfo(@Param("barcodeId") Long barcodeId) {
         return certMapper.selectProductCertInfo(barcodeId);
     }
+
+    public List<BarcodeAddCertListDto> selectBarcodeAddCertList(BarcodeAddCertSearchDto search) {
+        return certMapper.selectBarcodeAddCertList(search);
+    }
 }
