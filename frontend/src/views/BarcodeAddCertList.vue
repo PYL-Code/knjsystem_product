@@ -24,17 +24,22 @@
     <table class="table table-bordered table-hover">
       <thead class="table-light text-center">
       <tr>
-        <th>선택</th>
         <th>인증번호</th>
         <th>농가/단체명</th>
         <th>소속농가</th>
         <th>대표품목</th>
         <th>품목</th>
+        <th>선택</th>
       </tr>
       </thead>
       <tbody>
       <template v-if="certs.length > 0">
         <tr v-for="cert in certs" :key="cert.certId">
+          <td>{{ cert.stdCertNo }}</td>
+          <td>{{ cert.prdrGrpNm }}</td>
+          <td>{{ cert.frmrNm }}</td>
+          <td>{{ cert.repItemName }}</td>
+          <td>{{ cert.itemName }}</td>
           <td class="text-center">
             <input
                 type="radio"
@@ -43,11 +48,6 @@
                 v-model="selectedCertId"
             />
           </td>
-          <td>{{ cert.stdCertNo }}</td>
-          <td>{{ cert.prdrGrpNm }}</td>
-          <td>{{ cert.frmrNm }}</td>
-          <td>{{ cert.repItemName }}</td>
-          <td>{{ cert.itemName }}</td>
         </tr>
       </template>
       <tr v-else>
@@ -127,10 +127,12 @@ const submitSelectedCert = async () => {
   const certId = selectedCertId.value;
   const userNo = userInfo.value?.no;
 
-  if (!certId || !barcodeId || !userNo) {
-    alert('모든 값이 유효한지 확인해 주세요.');
-    return;
-  }
+  // if (!certId || !barcodeId || !userNo) {
+  //   console.warn('모든 값이 유효한지 확인해 주세요.');
+  //   console.log("certId: ", certId, "\nbarcodeId: ", barcodeId, "\nuserNo: ", userNo);
+  //   return;
+  // }
+  // console.log("certId: ", certId, "\nbarcodeId: ", barcodeId, "\nuserNo: ", userNo);
 
   try {
     await axios.post(
@@ -142,10 +144,10 @@ const submitSelectedCert = async () => {
         }
     );
     alert('✅ 인증정보가 바코드에 등록되었습니다!');
-    router.push('/barcode/list');
+    router.push({ path: '/barcode/detail', query: { barcodeId } });
   } catch (error) {
     console.error('인증정보 등록 실패:', error);
-    alert('❌ 인증정보 등록에 실패했습니다.');
+    alert('인증정보 등록에 실패했습니다.');
   }
 };
 

@@ -8,11 +8,6 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: '/cert/list',
-            name: 'certList',
-            component: MyCertList
-        },
-        {
             path: '/barcode/list',
             name: 'barcodeList',
             component: MyBarcodeList
@@ -23,7 +18,7 @@ const router = createRouter({
             component: BarcodeDetail
         },
         {
-            path: '/barcode/cert/update',
+            path: '/barcode/update/cert',
             name: 'barcodeAddCertList',
             component: BarcodeAddCertList
         }

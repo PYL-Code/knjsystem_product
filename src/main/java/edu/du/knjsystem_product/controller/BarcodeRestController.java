@@ -43,9 +43,22 @@ public class BarcodeRestController {
 
     @PostMapping("/update/cert/into/barcode")
     public ResponseEntity<String> updateCertInfo(@Param("certId") Long certId,
-                                                 @Param("barcodeId") String barcodeId,
+                                                 @Param("barcodeId") Long barcodeId,
                                                  @Param("userNo") Long userNo) {
         barcodeService.updateBarcodeCert(certId, barcodeId, userNo);
         return ResponseEntity.ok("인증정보 등록 완료되었습니다.");
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteBarcode(@Param("barcode") String barcode) {
+        barcodeService.deleteBarcodeAndProduct(barcode);
+        return ResponseEntity.ok("바코드 삭제 완료되었습니다.");
+    }
+
+    @PostMapping("/delete/cert/of/barcode")
+    public ResponseEntity<String> deleteBarcodeCert(@Param("barcodeId") Long barcodeId) {
+        barcodeService.deleteBarcodeCert(barcodeId);
+        return ResponseEntity.ok("인증정보 삭제 완료되었습니다.");
+    }
+
 }
