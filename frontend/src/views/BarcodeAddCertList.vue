@@ -1,29 +1,24 @@
 <template>
-  <div class="container mt-5">
-    <h2 class="mb-4 text-center">인증정보 추가</h2>
+  <div class="cert-container">
+    <h2 class="cert-title"><strong>인증정보 추가</strong></h2>
 
     <!-- 🔍 검색 필터 -->
-    <form @submit.prevent="fetchCerts" class="row g-2 align-items-center mb-4">
-      <div class="col-md-3">
-        <select v-model="searchField" class="form-select">
-          <option value="">전체</option>
-          <option value="stdCertNo">인증번호</option>
-          <option value="repItemName">대표품목</option>
-          <option value="itemName">품목</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <input v-model="searchText" class="form-control" placeholder="검색어 입력" />
-      </div>
-      <div class="col-md-3">
-        <button type="submit" class="btn btn-primary w-100">조회</button>
-      </div>
+    <form @submit.prevent="fetchCerts" class="cert-form">
+      <select v-model="searchField">
+        <option value="">전체</option>
+        <option value="stdCertNo">인증번호</option>
+        <option value="repItemName">대표품목</option>
+        <option value="itemName">품목</option>
+      </select>
+      <input v-model="searchText" type="text" placeholder="검색어 입력" />
+      <button type="submit">조회</button>
     </form>
 
     <!-- 📄 인증정보 목록 -->
-    <table class="table table-bordered table-hover">
-      <thead class="table-light text-center">
+    <table class="cert-table">
+      <thead>
       <tr>
+        <th>번호</th>
         <th>인증번호</th>
         <th>농가/단체명</th>
         <th>소속농가</th>
@@ -34,32 +29,39 @@
       </thead>
       <tbody>
       <template v-if="certs.length > 0">
-        <tr v-for="cert in certs" :key="cert.certId">
+        <tr v-for="(cert, index) in certs" :key="cert.certId">
+          <td>{{ certs.length - index }}</td>
           <td>{{ cert.stdCertNo }}</td>
           <td>{{ cert.prdrGrpNm }}</td>
           <td>{{ cert.frmrNm }}</td>
           <td>{{ cert.repItemName }}</td>
           <td>{{ cert.itemName }}</td>
-          <td class="text-center">
-            <input
-                type="radio"
-                name="selectedCert"
-                :value="cert.certId"
-                v-model="selectedCertId"
-            />
+          <td>
+            <label class="radio-wrapper">
+              <input
+                  type="radio"
+                  name="selectedCert"
+                  :value="cert.certId"
+                  v-model="selectedCertId"
+              />
+              <span class="checkmark"></span>
+            </label>
           </td>
         </tr>
       </template>
       <tr v-else>
-        <td colspan="6" class="text-center text-muted">조회된 인증정보가 없습니다.</td>
+        <td colspan="7" class="no-data">조회된 인증정보가 없습니다.</td>
       </tr>
       </tbody>
     </table>
 
-    <!-- 등록 버튼 -->
-    <div class="text-end">
-      <button class="btn btn-success" @click="submitSelectedCert" :disabled="!selectedCertId">
+    <!-- 등록 & 취소 버튼 -->
+    <div class="cert-action">
+      <button class="btn-submit" @click="submitSelectedCert" :disabled="!selectedCertId">
         등록
+      </button>
+      <button class="btn-deny" @click="goBack">
+        취소
       </button>
     </div>
   </div>
@@ -95,14 +97,8 @@ const fetchUserInfo = async () => {
 const fetchCerts = async () => {
   const token = getToken();
   const params = {};
-
-  if (!userInfo.value?.no) {
-    console.warn('❗ 사용자 정보 없음');
-    return;
-  }
-
+  if (!userInfo.value?.no) return;
   params.userNo = userInfo.value.no;
-
   if (searchField.value === '') {
     params.all = searchText.value;
   } else if (searchText.value) {
@@ -127,13 +123,6 @@ const submitSelectedCert = async () => {
   const certId = selectedCertId.value;
   const userNo = userInfo.value?.no;
 
-  // if (!certId || !barcodeId || !userNo) {
-  //   console.warn('모든 값이 유효한지 확인해 주세요.');
-  //   console.log("certId: ", certId, "\nbarcodeId: ", barcodeId, "\nuserNo: ", userNo);
-  //   return;
-  // }
-  // console.log("certId: ", certId, "\nbarcodeId: ", barcodeId, "\nuserNo: ", userNo);
-
   try {
     await axios.post(
         '/api/barcode/update/cert/into/barcode',
@@ -143,12 +132,16 @@ const submitSelectedCert = async () => {
           headers: { Authorization: `Bearer ${token}` }
         }
     );
-    alert('✅ 인증정보가 바코드에 등록되었습니다!');
+    alert('인증정보가 바코드에 등록되었습니다!');
     router.push({ path: '/barcode/detail', query: { barcodeId } });
   } catch (error) {
     console.error('인증정보 등록 실패:', error);
     alert('인증정보 등록에 실패했습니다.');
   }
+};
+
+const goBack = () => {
+  router.go(-1);
 };
 
 onMounted(async () => {
@@ -158,12 +151,126 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.container {
-  max-width: 1000px;
-  margin: auto;
+.cert-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
 }
-.table th,
-.table td {
-  vertical-align: middle;
+
+.cert-title {
+  text-align: center;
+  color: #2b4c7e;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.cert-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.cert-form select,
+.cert-form input {
+  padding: 0.6rem;
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.cert-form button {
+  padding: 0.6rem 1.5rem;
+  background-color: #2b4c7e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cert-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.cert-table th,
+.cert-table td {
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.cert-table thead {
+  background-color: #f6f8fc;
+}
+
+.no-data {
+  color: #aaa;
+  text-align: center;
+}
+
+.radio-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.radio-wrapper input[type="radio"] {
+  opacity: 0;
+  position: absolute;
+}
+
+.radio-wrapper .checkmark {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #2b4c7e;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+
+.radio-wrapper input:checked + .checkmark::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: #2b4c7e;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+
+.cert-action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.btn-submit {
+  padding: 0.7rem 1.5rem;
+  background-color: #1f8249;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-submit:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.btn-deny {
+  padding: 0.7rem 1.5rem;
+  background-color: #aaa;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
 }
 </style>

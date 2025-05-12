@@ -1,63 +1,48 @@
-<!-- BarcodeList.vue -->
 <template>
-  <div class="container">
-    <h2 class="my-4 text-center">바코드 조회</h2>
+  <div class="list-container">
+    <h2 class="list-title"><strong>바코드 조회</strong></h2>
 
-    <!-- 👤 사용자 정보 -->
-    <div class="row mb-4" v-if="userInfo">
-      <div class="col-md-4">
-        <div class="card p-2 text-center">
-          <strong>업체명/생산자명</strong><br />{{ userInfo.companyName }}
-        </div>
+    <!-- 사용자 정보 -->
+    <div class="user-info" v-if="userInfo">
+      <div class="user-card">
+        <span class="label">업체명</span>
+        <span class="value">{{ userInfo.companyName }}</span>
       </div>
-      <div class="col-md-4">
-        <div class="card p-2 text-center">
-          <strong>사업자등록번호</strong><br />{{ userInfo.bnsNo }}
-        </div>
+      <div class="user-card">
+        <span class="label">사업자등록번호</span>
+        <span class="value">{{ userInfo.bnsNo }}</span>
       </div>
-      <div class="col-md-4">
-        <div class="card p-2 text-center">
-          <strong>GLN(업체코드)</strong><br />{{ userInfo.company880Code || '-' }}
-        </div>
+      <div class="user-card">
+        <span class="label">GLN(업체코드)</span>
+        <span class="value">{{ userInfo.company880Code || '-' }}</span>
       </div>
     </div>
 
-    <!-- 🔍 검색 필터 -->
-    <form @submit.prevent="fetchBarcodes" class="row g-2 align-items-center mb-4">
-      <div class="col-md-2">
-        <select v-model="searchField" class="form-select">
+    <!-- 검색 필터 -->
+    <div class="filter-wrapper">
+      <form @submit.prevent="fetchBarcodes" class="filter-form">
+        <select v-model="searchField">
           <option value="">전체</option>
           <option value="barcodeNo">바코드번호</option>
           <option value="barcodeName">상품명</option>
           <option value="stdCertNo">인증번호</option>
           <option value="repItemName">대표품목명</option>
         </select>
-      </div>
-
-      <div class="col-md-5">
-        <input v-model="searchText" class="form-control" placeholder="검색어 입력" />
-      </div>
-
-      <div class="col-md-1"></div>
-
-      <div class="col-md-1">상품유형</div>
-      <div class="col-md-2">
-        <select v-model="search.productType" class="form-select">
-          <option value="">전체</option>
+        <input v-model="searchText" type="text" placeholder="검색어 입력" />
+        <select v-model="search.productType">
+          <option value="">전체 유형</option>
           <option value="단일상품">단일상품</option>
           <option value="혼합상품">혼합상품</option>
         </select>
-      </div>
+        <button type="submit">조회</button>
+      </form>
+    </div>
 
-      <div class="col-md-1">
-        <button type="submit" class="btn btn-primary w-100">조회</button>
-      </div>
-    </form>
-
-    <!-- 📄 바코드 목록 -->
-    <table class="table table-bordered table-hover">
-      <thead class="table-light text-center">
+    <!-- 바코드 목록 -->
+    <table class="barcode-table">
+      <thead>
       <tr>
+        <th>번호</th>
         <th>바코드번호</th>
         <th>상품명</th>
         <th>등록일</th>
@@ -68,13 +53,11 @@
       </thead>
       <tbody>
       <template v-if="barcodes.length > 0">
-        <tr
-            v-for="barcode in barcodes"
-            :key="barcode.barcodeNo"
-            @click="goToDetail(barcode.barcodeId)"
-            style="cursor: pointer"
-        >
-          <td>{{ barcode.barcodeNo }}</td>
+        <tr v-for="(barcode, index) in barcodes" :key="barcode.barcodeNo">
+          <td>{{ barcodes.length - index }}</td>
+          <td class="clickable" @click="goToDetail(barcode.barcodeId)">
+            {{ barcode.barcodeNo }}
+          </td>
           <td>{{ barcode.barcodeName }}</td>
           <td>{{ formatDate(barcode.barcodeRegDate) }}</td>
           <td>{{ barcode.productType }}</td>
@@ -83,10 +66,14 @@
         </tr>
       </template>
       <tr v-else>
-        <td colspan="6" class="text-center text-muted">조회된 데이터가 없습니다.</td>
+        <td colspan="7" class="no-data">조회된 데이터가 없습니다.</td>
       </tr>
       </tbody>
     </table>
+
+    <div class="bottom-action">
+      <router-link to="/barcode/insert" class="btn btn-add">바코드 등록</router-link>
+    </div>
   </div>
 </template>
 
@@ -117,14 +104,14 @@ const fetchUserInfo = async () => {
 
 const fetchBarcodes = async () => {
   const token = getToken();
-  if (!token) return;
-
   const params = {};
+
   if (searchField.value === '') {
-    params.all = searchText.value; // ✅ 전체 검색일 경우 all 파라미터로
+    params.all = searchText.value;
   } else if (searchText.value) {
     params[searchField.value] = searchText.value;
   }
+
   if (search.value.productType) {
     params.productType = search.value.productType;
   }
@@ -143,7 +130,6 @@ const fetchBarcodes = async () => {
 
 const goToDetail = (barcodeId) => {
   router.push({ path: '/barcode/detail', query: { barcodeId } });
-  // console.log(barcodes);
 };
 
 const formatDate = (dateStr) => {
@@ -156,3 +142,105 @@ onMounted(() => {
   fetchBarcodes();
 });
 </script>
+
+<style scoped>
+.list-container {
+  max-width: 960px;
+  margin: 2rem auto;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+.list-title {
+  text-align: center;
+  color: #2b4c7e;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.user-card {
+  flex: 1;
+  background: #f0f4f8;
+  border: 1px solid #d0d7e2;
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+}
+.label {
+  font-weight: bold;
+}
+.value {
+  display: block;
+  margin-top: 0.4rem;
+}
+.filter-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+.filter-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.filter-form select,
+.filter-form input {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.filter-form button {
+  padding: 0.6rem 1.2rem;
+  background-color: #2b4c7e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.barcode-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+.barcode-table th,
+.barcode-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: center;
+}
+.barcode-table th {
+  background-color: #f6f8fc;
+  color: #2b4c7e;
+}
+.barcode-table tr:hover {
+  background-color: #f9fcff;
+}
+.no-data {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+.bottom-action {
+  text-align: right;
+}
+.btn-add {
+  background-color: #1f8249;
+  color: white;
+  text-decoration: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.clickable {
+  color: #2b4c7e;
+  cursor: pointer;
+}
+.clickable:hover {
+  color: #174c96;
+}
+</style>

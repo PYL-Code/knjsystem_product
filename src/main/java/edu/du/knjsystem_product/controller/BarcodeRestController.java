@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/barcode")
@@ -31,6 +32,12 @@ public class BarcodeRestController {
 
         List<BarcodeListDto> list = barcodeService.getBarcodesList(search);
         return ResponseEntity.ok(list);
+    }
+
+    @PostMapping("/insert")
+    public ResponseEntity<String> registerBarcode(@RequestBody Map<String, Object> payload) {
+        barcodeService.processBarcodeRegistration(payload);
+        return ResponseEntity.ok("바코드 등록 성공");
     }
 
     @GetMapping("/detail")
@@ -56,8 +63,10 @@ public class BarcodeRestController {
     }
 
     @PostMapping("/delete/cert/of/barcode")
-    public ResponseEntity<String> deleteBarcodeCert(@Param("barcodeId") Long barcodeId) {
-        barcodeService.deleteBarcodeCert(barcodeId);
+    public ResponseEntity<String> deleteBarcodeCert(@Param("barcodeId") Long barcodeId,
+                                                    @Param("barcodeNo") String barcodeNo,
+                                                    @Param("productType") String productType) {
+        barcodeService.deleteBarcodeCert(barcodeId, barcodeNo, productType);
         return ResponseEntity.ok("인증정보 삭제 완료되었습니다.");
     }
 
