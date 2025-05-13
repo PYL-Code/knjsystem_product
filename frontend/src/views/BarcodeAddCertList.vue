@@ -20,9 +20,9 @@
       <tr>
         <th>번호</th>
         <th>인증번호</th>
+        <th>대표품목</th>
         <th>농가/단체명</th>
         <th>소속농가</th>
-        <th>대표품목</th>
         <th>품목</th>
         <th>선택</th>
       </tr>
@@ -32,9 +32,9 @@
         <tr v-for="(cert, index) in certs" :key="cert.certId">
           <td>{{ certs.length - index }}</td>
           <td>{{ cert.stdCertNo }}</td>
+          <td>{{ cert.repItemName }}</td>
           <td>{{ cert.prdrGrpNm }}</td>
           <td>{{ cert.frmrNm }}</td>
-          <td>{{ cert.repItemName }}</td>
           <td>{{ cert.itemName }}</td>
           <td>
             <label class="radio-wrapper">
@@ -188,6 +188,8 @@ onMounted(async () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .cert-table {
@@ -196,15 +198,24 @@ onMounted(async () => {
   margin-bottom: 1.5rem;
 }
 
-.cert-table th,
+.cert-table thead {
+  background-color: #e9f0f6; /* 연한 회색-블루 */
+}
+
+.cert-table th {
+  color: #2b4c7e; /* 진한 블루 */
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-top: 2px solid #c9d6e2;
+  padding: 0.75rem;
+  text-align: center;
+  background-color: #e9f0f6;
+}
+
 .cert-table td {
   padding: 0.75rem;
   border: 1px solid #e0e0e0;
   text-align: center;
-}
-
-.cert-table thead {
-  background-color: #f6f8fc;
 }
 
 .no-data {
@@ -238,8 +249,8 @@ onMounted(async () => {
   background: #2b4c7e;
   border-radius: 50%;
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 4px;
+  left: 4px;
 }
 
 .cert-action {
@@ -255,7 +266,8 @@ onMounted(async () => {
   color: white;
   border: none;
   border-radius: 5px;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
 }
 
@@ -266,11 +278,13 @@ onMounted(async () => {
 
 .btn-deny {
   padding: 0.7rem 1.5rem;
-  background-color: #aaa;
+  background-color: #2b4c7e;
   color: white;
   border: none;
   border-radius: 5px;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
 }
 </style>
+

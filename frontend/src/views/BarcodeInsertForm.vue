@@ -1,6 +1,6 @@
 <template>
   <div class="insert-container">
-    <h2 class="insert-title">바코드 등록</h2>
+    <h2 class="insert-title"><strong>바코드 등록</strong></h2>
 
     <!-- 👤 사용자 정보 -->
     <div class="user-info" v-if="userInfo">
@@ -111,22 +111,26 @@ onMounted(fetchUserInfo);
 <style scoped>
 .insert-container {
   max-width: 800px;
-  margin: 2rem auto;
+  margin: auto;
+  padding: 2rem;
   font-family: 'Segoe UI', sans-serif;
   color: #333;
 }
+
 .insert-title {
   text-align: center;
   font-size: 2rem;
   color: #2b4c7e;
   margin-bottom: 2rem;
 }
+
 .user-info {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 2rem;
 }
+
 .user-card {
   flex: 1;
   background: #f0f4f8;
@@ -135,66 +139,94 @@ onMounted(fetchUserInfo);
   padding: 1rem;
   text-align: center;
 }
+
 .label {
   font-weight: bold;
   color: #555;
 }
+
 .value {
   display: block;
   margin-top: 0.3rem;
   color: #222;
 }
+
 .form-group {
-  margin-bottom: 1.2rem;
+  margin-bottom: 2rem;
 }
+
 .form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   color: #2b4c7e;
+  margin-bottom: 0.5rem;
+  display: block;
+  border-left: 4px solid #2b4c7e;
+  padding-left: 0.6rem;
 }
+
 .required {
   color: red;
   margin-left: 4px;
 }
+
 input[type="text"] {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.75rem 1rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 6px;
+  background-color: #f9fbfd;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease;
 }
+
+input[type="text"]:focus {
+  border-color: #2b4c7e;
+  outline: none;
+}
+
 .radio-group {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
+  padding-left: 0.2rem;
 }
+
 .radio-group label {
   font-weight: 500;
+  color: #444;
 }
+
 input[type="radio"] {
   margin-right: 6px;
 }
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
 }
+
+/* ✅ 버튼 통일 스타일 */
 .btn {
   padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
   border: none;
   border-radius: 5px;
-  font-weight: bold;
   cursor: pointer;
+  text-align: center;
 }
+
 .btn-submit {
   background-color: #1f8249;
   color: white;
 }
+
 .btn-cancel {
-  background-color: #ccc;
-  color: #333;
+  background-color: #2b4c7e;
+  color: white;
   text-decoration: none;
-  line-height: 2.2rem;
-  padding: 0.6rem 1.2rem;
+  line-height: 1.8rem;
 }
 </style>

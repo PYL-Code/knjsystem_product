@@ -20,8 +20,8 @@
 
     <!-- 인증정보 버튼 -->
     <div class="action-buttons">
-      <button v-if="!cert" @click="goToCertUpdate" class="btn btn-success">인증정보 추가</button>
-      <button v-if="cert" @click="deleteCert" class="btn btn-success">인증정보 삭제</button>
+      <button v-if="!cert" @click="goToCertUpdate" class="btn btn-add">인증정보 추가</button>
+      <button v-if="cert" @click="deleteCert" class="btn btn-add">인증정보 삭제</button>
     </div>
 
     <!-- 바코드 정보 -->
@@ -189,7 +189,7 @@ const deleteBarcode = async () => {
 }
 .user-card {
   flex: 1;
-  background: #f7f9fc;
+  background: #f0f4f8;
   border: 1px solid #d0d7e2;
   padding: 1rem;
   border-radius: 6px;
@@ -247,13 +247,19 @@ const deleteBarcode = async () => {
   gap: 1rem;
   margin-top: 1.5rem;
 }
+
+/* 버튼 공통 스타일 */
 .btn {
-  padding: 0.6rem 1.4rem;
+  padding: 0.6rem 1.2rem;
   font-weight: 600;
+  font-size: 0.95rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  text-align: center;
 }
+
+/* 개별 색상 정의 */
 .btn-add {
   background-color: #1f8249;
   color: white;
@@ -261,15 +267,19 @@ const deleteBarcode = async () => {
 .btn-delete {
   background-color: #d9534f;
   color: white;
+  padding: 0.6rem 1.2rem;
 }
 .btn-back {
   background-color: #2b4c7e;
   color: white;
   text-decoration: none;
-  line-height: 2.2rem;
   padding: 0.6rem 1.2rem;
   border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 2.2rem;
 }
+
 .info-table {
   border-top: 1px solid #ccc;
   border-left: 1px solid #ccc;
@@ -297,5 +307,4 @@ const deleteBarcode = async () => {
   padding: 0.75rem;
   color: #333;
 }
-
 </style>

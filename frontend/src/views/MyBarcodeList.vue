@@ -146,7 +146,8 @@ onMounted(() => {
 <style scoped>
 .list-container {
   max-width: 960px;
-  margin: 2rem auto;
+  margin: auto;
+  padding: 2rem;
   font-family: 'Segoe UI', sans-serif;
   color: #333;
 }
@@ -188,7 +189,19 @@ onMounted(() => {
   flex-wrap: wrap;
   justify-content: center;
 }
-.filter-form select,
+.filter-form select {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 160px;
+}
+
+.filter-form input {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 260px; /* 길이 증가 */
+}
 .filter-form input {
   padding: 0.6rem;
   border: 1px solid #ccc;
@@ -207,7 +220,18 @@ onMounted(() => {
   border-collapse: collapse;
   margin-bottom: 2rem;
 }
-.barcode-table th,
+.barcode-table thead th {
+  background-color: #e9f0f6; /* 연한 회색-블루 */
+}
+.barcode-table th {
+  background-color: #e9f0f6; /* 연한 회색-블루 */
+  color: #2b4c7e;             /* 짙은 블루 */
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-top: 2px solid #c9d6e2;
+  padding: 0.75rem;
+  text-align: center;
+}
 .barcode-table td {
   border: 1px solid #ddd;
   padding: 0.75rem;
