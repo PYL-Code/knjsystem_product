@@ -95,4 +95,29 @@ public class BarcodeService {
         barcodeMapper.insertG003(dto);
         barcodeMapper.insertA004ForMix(dto);
     }
+
+    //혼합상품 디테일 구성상품 추가
+    public void mixProductAddItem(BarcodeMixProductItemInsertDto item) {
+        barcodeMapper.insertG002Item(item);
+    }
+
+    //혼합상품 디테일 구성상품에 인증번호 추가
+    public void registerG003Cert(Long g002Id, Long certId) {
+        barcodeMapper.insertG003Cert(g002Id, certId);
+    }
+
+    //혼합상품 구성상품 인증번호 삭제
+    public void deleteG003Cert(Long g002Id, Long certId) {
+        barcodeMapper.deleteG003Cert(g002Id, certId);
+    }
+
+    //혼합상품 구성상품 삭제
+    public void deleteG002Item(Long g002Id) {
+        barcodeMapper.deleteG002Only(g002Id);
+    }
+
+    //혼합상품 구성상품 리스트 불러오기
+    public List<BarcodeMixProductItemDto> getG002ItemList(Long g001Id) {
+        return barcodeMapper.selectG002ItemList(g001Id);
+    }
 }

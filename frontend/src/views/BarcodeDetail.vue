@@ -4,22 +4,14 @@
 
     <!-- 사용자 정보 -->
     <div class="user-info" v-if="userInfo">
-      <div class="user-card">
-        <span class="label">업체명</span>
-        <span class="value">{{ userInfo.companyName }}</span>
-      </div>
-      <div class="user-card">
-        <span class="label">사업자등록번호</span>
-        <span class="value">{{ userInfo.bnsNo }}</span>
-      </div>
-      <div class="user-card">
-        <span class="label">GLN(업체코드)</span>
-        <span class="value">{{ userInfo.company880Code || '-' }}</span>
+      <div class="user-card" v-for="(value, label) in userLabels" :key="label">
+        <span class="label">{{ label }}</span>
+        <span class="value">{{ value || '-' }}</span>
       </div>
     </div>
 
-    <!-- 인증정보 버튼 -->
-    <div class="action-buttons">
+    <!-- 인증정보 버튼 (단일상품용) -->
+    <div v-if="isSingle" class="action-buttons">
       <button v-if="!cert" @click="goToCertUpdate" class="btn btn-add">인증정보 추가</button>
       <button v-if="cert" @click="deleteCert" class="btn btn-add">인증정보 삭제</button>
     </div>
@@ -28,38 +20,78 @@
     <div class="detail-section" v-if="barcode">
       <div class="section-title">상품 바코드 정보</div>
       <div class="info-table">
-        <div class="info-row">
-          <div class="info-label">바코드번호</div>
-          <div class="info-value">{{ barcode.barcode }}</div>
-        </div>
-        <div class="info-row alt">
-          <div class="info-label">상품명</div>
-          <div class="info-value">{{ barcode.barcodeName }}</div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">상품유형</div>
-          <div class="info-value">{{ barcode.productType }}</div>
+        <div class="info-row" v-for="(value, label) in barcodeLabels" :key="label">
+          <div class="info-label">{{ label }}</div>
+          <div class="info-value">{{ value }}</div>
         </div>
       </div>
     </div>
 
-    <!-- 인증 정보 -->
-    <div class="detail-section" v-if="cert">
+    <!-- 인증 정보 (단일상품) -->
+    <div class="detail-section" v-if="isSingle && cert">
       <div class="section-title">인증 정보</div>
       <div class="info-table">
-        <div class="info-row"><div class="info-label">인증번호</div><div class="info-value">{{ cert.stdCertNo }}</div></div>
-        <div class="info-row alt"><div class="info-label">인증구분</div><div class="info-value">{{ cert.certGbNm }}</div></div>
-        <div class="info-row"><div class="info-label">인증기간</div><div class="info-value">{{ cert.certStartDate }} ~ {{ cert.certEndDate }}</div></div>
-        <div class="info-row alt"><div class="info-label">인증상태</div><div class="info-value">{{ cert.certStateNm }}</div></div>
-        <div class="info-row"><div class="info-label">생산자단체명</div><div class="info-value">{{ cert.prdrGrpNm }}</div></div>
-        <div class="info-row alt"><div class="info-label">개인/단체</div><div class="info-value">{{ cert.psnGroupNm }}</div></div>
-        <div class="info-row"><div class="info-label">대표품목명</div><div class="info-value">{{ cert.repItemNm }}</div></div>
-        <div class="info-row alt"><div class="info-label">품목명</div><div class="info-value">{{ cert.itemNm }}</div></div>
-        <div class="info-row"><div class="info-label">소속농가명</div><div class="info-value">{{ cert.frmrNm }}</div></div>
+        <div class="info-row" v-for="(value, label) in certLabels" :key="label">
+          <div class="info-label">{{ label }}</div>
+          <div class="info-value">{{ value }}</div>
+        </div>
       </div>
     </div>
-    <div v-else class="no-cert-alert">
-      인증정보를 추가해 주세요.
+    <div v-else-if="isSingle" class="no-cert-alert">인증정보를 추가해 주세요.</div>
+
+    <!-- 구성상품 관리 (혼합상품) -->
+    <div v-if="isMixed" class="detail-section">
+      <div class="section-title">구성상품 관리</div>
+
+      <div class="mix-action">
+        <button class="btn btn-add" @click="showForm = !showForm">구성상품 추가</button>
+      </div>
+
+      <div class="mix-add-form" v-if="showForm">
+        <input v-model="newItemName" type="text" placeholder="구성상품명 입력" />
+        <button class="btn btn-add" @click="addProductItem">등록</button>
+      </div>
+
+      <div v-if="productItems.length > 0">
+        <div class="mix-list" v-for="item in productItems" :key="item.g002Id">
+          <div class="mix-header">
+            <strong>{{ item.itemName }}</strong>
+            <button class="btn btn-delete" @click="deleteProductItem(item.g002Id)" :disabled="item.hasCert">삭제</button>
+          </div>
+
+          <div class="mix-cert-add">
+            <input v-model="item.newCertId" type="number" placeholder="인증 ID 입력" />
+            <button class="btn btn-add" @click="addCertToProduct(item.g002Id, item.newCertId)">인증 추가</button>
+          </div>
+
+          <table class="cert-table">
+            <thead>
+            <tr>
+              <th>인증번호</th>
+              <th>대표품목</th>
+              <th>소속농가</th>
+              <th>품목</th>
+              <th>삭제</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="cert in item.certs" :key="cert.certId">
+              <td>{{ cert.stdCertNo }}</td>
+              <td>{{ cert.repItemName }}</td>
+              <td>{{ cert.frmrNm }}</td>
+              <td>{{ cert.itemName }}</td>
+              <td>
+                <button class="btn btn-delete" @click="deleteCertFromProduct(item.g002Id, cert.certId)">삭제</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div v-else class="no-product-alert">
+        구성상품을 추가해 주세요.
+      </div>
+
     </div>
 
     <!-- 하단 버튼 -->
@@ -69,45 +101,81 @@
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getToken } from '@/utils/auth';
 
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
+const token = getToken();
+const config = { headers: { Authorization: `Bearer ${token}` } };
 
 const barcode = ref(null);
 const cert = ref(null);
 const userInfo = ref(null);
+const productItems = ref([]);
+const newItemName = ref('');
+const showForm = ref(false);
+
+const isSingle = computed(() => barcode.value?.productType === '단일상품');
+const isMixed = computed(() => barcode.value?.productType === '혼합상품');
+
+const userLabels = computed(() => ({
+  '업체명': userInfo.value?.companyName,
+  '사업자등록번호': userInfo.value?.bnsNo,
+  'GLN(업체코드)': userInfo.value?.company880Code
+}));
+
+const barcodeLabels = computed(() => ({
+  '바코드번호': barcode.value?.barcode,
+  '상품명': barcode.value?.barcodeName,
+  '상품유형': barcode.value?.productType
+}));
+
+const certLabels = computed(() => ({
+  '인증번호': cert.value?.stdCertNo,
+  '인증구분': cert.value?.certGbNm,
+  '인증기간': `${cert.value?.certStartDate} ~ ${cert.value?.certEndDate}`,
+  '인증상태': cert.value?.certStateNm,
+  '생산자단체명': cert.value?.prdrGrpNm,
+  '개인/단체': cert.value?.psnGroupNm,
+  '대표품목명': cert.value?.repItemNm,
+  '품목명': cert.value?.itemNm,
+  '소속농가명': cert.value?.frmrNm
+}));
 
 onMounted(async () => {
-  const token = getToken();
   const barcodeId = route.query.barcodeId;
-
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-
   try {
     const userRes = await axios.get('/api/list/member', config);
     userInfo.value = userRes.data;
 
-    const { data: barcodeData } = await axios.get('/api/barcode/detail', {
-      params: { barcodeId },
-      ...config
-    });
+    const { data: barcodeData } = await axios.get('/api/barcode/detail', { params: { barcodeId }, ...config });
     barcode.value = barcodeData;
 
-    const { data: certData } = await axios.get('/api/cert/barcode/detail', {
-      params: { seqNoA004: barcodeId },
-      ...config
-    });
-    cert.value = certData;
+    if (isSingle.value) {
+      const { data: certData } = await axios.get('/api/cert/barcode/detail', {
+        params: { seqNoA004: barcodeId }, ...config
+      });
+      cert.value = certData;
+    }
+
+    if (isMixed.value) {
+      const { data: g002List } = await axios.get('/api/barcode/mix/product/list', {
+        params: { barcodeId }, ...config
+      });
+
+      productItems.value = g002List.map(item => ({
+        ...item,
+        certs: item.certs || [],
+        newCertId: '',
+        hasCert: Array.isArray(item.certs) && item.certs.length > 0
+      }));
+    }
   } catch (err) {
-    console.error('조회 실패:', err);
+    console.error('데이터 조회 실패:', err);
   }
 });
 
@@ -117,56 +185,55 @@ const goToCertUpdate = () => {
 };
 
 const deleteCert = async () => {
-  const token = getToken();
   const barcodeId = route.query.barcodeId;
   const barcodeNo = barcode.value?.barcode;
   const productType = barcode.value?.productType;
-
-  if (!confirm('정말 이 바코드의 인증정보를 삭제하시겠습니까?')) return;
-
-  try {
-    await axios.post('/api/barcode/delete/cert/of/barcode', null, {
-      params: { barcodeId, barcodeNo, productType },
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    alert('인증정보가 성공적으로 삭제되었습니다.');
-    cert.value = null;
-  } catch (err) {
-    console.error('인증정보 삭제 실패:', err);
-    alert('인증정보 삭제 중 오류가 발생했습니다.');
-  }
+  if (!confirm('정말 인증정보를 삭제하시겠습니까?')) return;
+  await axios.post('/api/barcode/delete/cert/of/barcode', null, {
+    params: { barcodeId, barcodeNo, productType }, ...config
+  });
+  cert.value = null;
 };
 
 const deleteBarcode = async () => {
-  const token = getToken();
   const barcodeNo = barcode.value?.barcode;
+  if (!barcodeNo || cert.value) return alert('삭제 불가');
+  if (!confirm('바코드를 삭제하시겠습니까?')) return;
+  await axios.delete('/api/barcode/delete', { params: { barcode: barcodeNo }, ...config });
+  router.push('/barcode/list');
+};
 
-  if (!barcodeNo) {
-    alert('바코드 정보가 없습니다.');
-    return;
-  }
+const addProductItem = async () => {
+  if (!newItemName.value) return alert('상품명을 입력해주세요');
+  const payload = { g001Id: barcode.value.g001Id, itemName: newItemName.value };
+  await axios.post('/api/barcode/mix/product/add/item', payload, config);
+  showForm.value = false;
+  location.reload();
+};
 
-  if (cert.value) {
-    alert('인증정보가 있는 바코드는 삭제할 수 없습니다.');
-    return;
-  }
+const deleteProductItem = async (g002Id) => {
+  const item = productItems.value.find(i => i.g002Id === g002Id);
+  if (item.hasCert) return alert('인증정보가 있는 구성상품은 삭제할 수 없습니다.');
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  await axios.delete('/api/barcode/mix/product/delete', { params: { g002Id }, ...config });
+  location.reload();
+};
 
-  if (!confirm('정말 이 바코드를 삭제하시겠습니까?')) return;
+const addCertToProduct = async (g002Id, certId) => {
+  if (!certId) return;
+  await axios.post('/api/barcode/mix/product/insert/cert', null, {
+    params: { g002Id, certId }, ...config
+  });
+  location.reload();
+};
 
-  try {
-    await axios.delete('/api/barcode/delete', {
-      params: { barcode: barcodeNo },
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    alert('바코드가 성공적으로 삭제되었습니다.');
-    router.push('/barcode/list');
-  } catch (error) {
-    console.error('바코드 삭제 실패:', error);
-    alert('바코드 삭제 중 오류가 발생했습니다.');
-  }
+const deleteCertFromProduct = async (g002Id, certId) => {
+  await axios.delete('/api/barcode/mix/product/delete/cert', {
+    params: { g002Id, certId }, ...config
+  });
+  location.reload();
 };
 </script>
-
 <style scoped>
 .detail-container {
   max-width: 960px;
@@ -226,60 +293,6 @@ const deleteBarcode = async () => {
   border-left: 4px solid #2b4c7e;
   padding-left: 0.6rem;
 }
-.info-grid {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  row-gap: 0.6rem;
-  column-gap: 1.5rem;
-}
-.no-cert-alert {
-  text-align: center;
-  background: #fff3cd;
-  color: #856404;
-  padding: 1rem;
-  border-radius: 4px;
-  margin-bottom: 2rem;
-  font-weight: 500;
-}
-.footer-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-/* 버튼 공통 스타일 */
-.btn {
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
-}
-
-/* 개별 색상 정의 */
-.btn-add {
-  background-color: #1f8249;
-  color: white;
-}
-.btn-delete {
-  background-color: #d9534f;
-  color: white;
-  padding: 0.6rem 1.2rem;
-}
-.btn-back {
-  background-color: #2b4c7e;
-  color: white;
-  text-decoration: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  line-height: 2.2rem;
-}
-
 .info-table {
   border-top: 1px solid #ccc;
   border-left: 1px solid #ccc;
@@ -306,5 +319,97 @@ const deleteBarcode = async () => {
   flex: 1;
   padding: 0.75rem;
   color: #333;
+}
+.no-cert-alert {
+  text-align: center;
+  background: #fff3cd;
+  color: #856404;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+.footer-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.btn {
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-add {
+  background-color: #1f8249;
+  color: white;
+}
+.btn-delete {
+  background-color: #d9534f;
+  color: white;
+}
+.btn-back {
+  background-color: #2b4c7e;
+  color: white;
+  text-decoration: none;
+}
+.mix-action {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+.mix-add-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.mix-add-form input {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.mix-list {
+  margin-bottom: 2rem;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+}
+.mix-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.mix-cert-add {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.mix-cert-add input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.cert-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.cert-table th,
+.cert-table td {
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+.cert-table thead {
+  background-color: #f0f4f8;
 }
 </style>

@@ -4,6 +4,7 @@ import edu.du.knjsystem_product.dto.*;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BarcodeMapper {
@@ -94,4 +95,32 @@ public interface BarcodeMapper {
     @Insert("INSERT INTO T_SG_A004 (SEQ_NO_A001, PRDR_BAR_CD, PRDR_BAR_NM, STATUS) " +
             "VALUES (#{userNo}, #{barcodeNo}, #{barcodeName}, 'I')")
     void insertA004ForMix(BarcodeInsertMixDto dto);
+
+
+    //혼합상품 상세정보 중 단위상품 추가
+    @Insert(" INSERT INTO T_SG_G002 ( SEQ_NO_G001, PRDR_ITEM_NM, REGIST_DATE, DEL_YN) " +
+            " VALUES ( #{g001Id}, #{itemName}, CURRENT_DATE, 'N' )")
+    @Options(useGeneratedKeys = true, keyProperty = "g002Id", keyColumn = "SEQ_NO_G002")
+    void insertG002Item(BarcodeMixProductItemInsertDto dto);
+
+
+    //혼합상품 상세정보 중 구성상품에 인증번호 추가
+    @Insert("INSERT INTO T_SG_G003 ( SEQ_NO_G002, SEQ_NO_A003, REGIST_DATE, DEL_YN ) " +
+            "VALUES ( #{g002Id}, #{certId}, CURRENT_DATE, 'N' )")
+    void insertG003Cert(@Param("g002Id") Long g002Id, @Param("certId") Long certId);
+
+
+    //구성상품 인증정보 삭제
+    @Delete("DELETE FROM T_SG_G003 WHERE SEQ_NO_G002 = #{g002Id} AND SEQ_NO_A003 = #{certId}")
+    void deleteG003Cert(@Param("g002Id") Long g002Id, @Param("certId") Long certId);
+
+
+    //구성상품 삭제
+    @Delete("DELETE FROM T_SG_G002 WHERE SEQ_NO_G002 = #{g002Id}")
+    void deleteG002Only(@Param("g002Id") Long g002Id);
+
+
+    //구성상품 리스트
+    List<BarcodeMixProductItemDto> selectG002ItemList(@Param("g001Id") Long g001Id);
+
 }

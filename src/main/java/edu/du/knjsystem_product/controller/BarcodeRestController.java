@@ -1,8 +1,6 @@
 package edu.du.knjsystem_product.controller;
 
-import edu.du.knjsystem_product.dto.BarcodeDetailDto;
-import edu.du.knjsystem_product.dto.BarcodeListDto;
-import edu.du.knjsystem_product.dto.BarcodeSearchDto;
+import edu.du.knjsystem_product.dto.*;
 import edu.du.knjsystem_product.security.CustomUserDetails;
 import edu.du.knjsystem_product.service.BarcodeService;
 import org.apache.ibatis.annotations.Param;
@@ -70,4 +68,38 @@ public class BarcodeRestController {
         return ResponseEntity.ok("인증정보 삭제 완료되었습니다.");
     }
 
+    @PostMapping("/mix/product/add/item")
+    public ResponseEntity<String> mixProductAddItem(@RequestBody BarcodeMixProductItemInsertDto productItem) {
+        barcodeService.mixProductAddItem(productItem);
+        return ResponseEntity.ok("구성상품이 추가되었습니다.");
+    }
+
+    //바코드 혼합상품 인증번호 등록
+    @PostMapping("/mix/product/insert/cert")
+    public ResponseEntity<String> insertBarcodeMixProductCert(@RequestParam("g002Id") Long itemId,
+                                                              @RequestParam("certId") Long certId) {
+        barcodeService.registerG003Cert(itemId, certId);
+        return ResponseEntity.ok("인증정보가 구성상품에 등록되었습니다.");
+    }
+
+    //바코드 혼합상품 인증번호 삭제
+    @DeleteMapping("/mix/product/delete/cert")
+    public ResponseEntity<String> deleteBarcodeMixProductCert(@RequestParam("g002Id") Long g002Id,
+                                                              @RequestParam("certId") Long certId) {
+        barcodeService.deleteG003Cert(g002Id, certId);
+        return ResponseEntity.ok("구성상품의 인증정보가 삭제되었습니다.");
+    }
+
+
+    @DeleteMapping("/mix/product/delete")
+    public ResponseEntity<String> deleteBarcodeMixProduct(@RequestParam("g002Id") Long g002Id) {
+        barcodeService.deleteG002Item(g002Id);
+        return ResponseEntity.ok("구성상품 삭제 완료");
+    }
+
+    @GetMapping("/mix/product/list")
+    public ResponseEntity<List<BarcodeMixProductItemDto>> getMixProductList(@RequestParam("barcodeId") Long g001Id) {
+        List<BarcodeMixProductItemDto> list = barcodeService.getG002ItemList(g001Id);
+        return ResponseEntity.ok(list);
+    }
 }

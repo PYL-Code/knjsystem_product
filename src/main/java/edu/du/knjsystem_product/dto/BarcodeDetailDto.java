@@ -13,4 +13,5 @@ public class BarcodeDetailDto {
     private String barcode;
     private String barcodeName;
     private String productType;
+    private Long g001Id;
 }

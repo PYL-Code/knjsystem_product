@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.du.knjsystem_product.mapper.BarcodeMapper">
+
+    <resultMap id="G002WithCertsMap" type="edu.du.knjsystem_product.dto.BarcodeMixProductItemDto">
+        <id property="g002Id" column="SEQ_NO_G002" />
+        <result property="itemName" column="PRDR_ITEM_NM" />
+        <collection property="certs" ofType="edu.du.knjsystem_product.dto.BarcodeMixProductItemCertDto">
+            <id property="certId" column="SEQ_NO_A003" />
+            <result property="stdCertNo" column="STD_CERT_NO" />
+            <result property="repItemName" column="REP_ITEM_NM" />
+            <result property="frmrNm" column="FRMR_NM" />
+            <result property="itemName" column="ITEM_NM" />
+        </collection>
+    </resultMap>
+
+    <select id="selectG002ItemList" resultMap="G002WithCertsMap">
+        SELECT
+            G2.SEQ_NO_G002,
+            G2.PRDR_ITEM_NM,
+            A3.SEQ_NO_A003,
+            A3.STD_CERT_NO,
+            A3.REP_ITEM_NM,
+            A3.FRMR_NM,
+            A3.ITEM_NM
+        FROM T_SG_G002 G2
+                 LEFT JOIN T_SG_G003 G3 ON G2.SEQ_NO_G002 = G3.SEQ_NO_G002 AND G3.DEL_YN = 'N'
+                 LEFT JOIN T_SG_A003 A3 ON G3.SEQ_NO_A003 = A3.SEQ_NO_A003
+        WHERE G2.SEQ_NO_G001 = #{g001Id}
+          AND G2.DEL_YN = 'N'
+    </select>
+
+</mapper>

@@ -9,6 +9,7 @@
             A004.SEQ_NO_A004 AS barcodeId,
             A004.PRDR_BAR_CD AS barcode,
             A004.PRDR_BAR_NM AS barcodeName,
+            G1.SEQ_NO_G001 AS g001Id,
             CASE
                 WHEN EXISTS (
                     SELECT 1
@@ -20,6 +21,7 @@
                 END AS productType
         FROM
             T_SG_A004 A004
+                LEFT JOIN T_SG_G001 G1 ON G1.PRDR_BAR_CD = A004.PRDR_BAR_CD
         WHERE
             A004.SEQ_NO_A004 = #{barcodeId}
     </select>
